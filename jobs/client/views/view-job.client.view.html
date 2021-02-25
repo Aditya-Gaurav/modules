@@ -1,0 +1,39 @@
+<section ng-controller="JobsController" ng-init="findOne()" ng-show="job.jobId">
+  <div class="page-header">
+    <h1>Job: <span class="capitalize">{{::job.objectType}}</span> - <span class="capitalize">{{::job.operation}}</span></h1>
+  </div>
+  <div class="col-md-8">
+    <table class="table table-striped">
+      <tr><th>Module</th><td ng-bind="job.objectType" class="word-break-all capitalize"></td></tr>
+      <tr><th>Operation</th><td ng-bind="job.operation " class="word-break-all capitalize"></td></tr>
+      <!-- <tr><th>Object Code</th><td ng-bind="job.object.code" class="word-break-all"></td></tr> -->
+      <tr><th>Created At (UTC)</th><td ng-bind="job.created |  date:'medium' : 'UTC'" ></td></tr>
+      <tr><th>Updated At (UTC)</th><td ng-bind="job.updated  | date:'medium' : 'UTC'" ></td></tr>
+      <tr><th>User</th><td ng-bind="job.user.username"></td></tr>
+      <tr><th>Payload</th><td><pre>{{job.payload | json}}</pre></td></tr>
+      <tr ng-if="job.result"><th>Result</th><td><pre>{{getResult(job.result) | json}}</pre></td></tr>     
+      <tr><th>Status</th><td ng-bind="job.status" ></td></tr> 
+      <tr><th>Error</th><td class="text-danger" ng-bind="job.last_error" ></td></tr>
+      <tr><th>Comments</th><td ng-bind="job.comments" ></td></tr>
+      <!-- <tr ng-if="isRoot"><th>Tenant</th>
+        <td><pre>{{job.tenant | json}}</pre></td>
+      </tr>  
+      <tr><th>Partner</th>
+        <td><pre>{{job.partner | json}}</pre></td>
+      </tr>     -->
+      <tr><th>Actions</th><td>
+        <button  type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="jobs.list" title="Back">
+          <span class="luci-button__inner">
+            <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                <use xlink:href="/assets/css/icons/luci.svg#navigate-back">
+                </use>
+            </svg>
+          </span>
+        </button>
+      </td></tr>
+    </table>
+  </div>
+  <div ng-show="error" class="text-danger">
+    <strong ng-bind="error"></strong>
+  </div>
+</section>

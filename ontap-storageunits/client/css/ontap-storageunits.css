@@ -1,0 +1,18 @@
+.popover-content{
+    width: calc(220px - 28px);
+    border-radius:6px;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    padding: 10px;
+}
+.info-popover{
+    border:none!important;
+    box-shadow:none!important;
+    z-index:100!important;
+}
+
+
+.popover.right > .arrow{
+    display:none!important;
+}

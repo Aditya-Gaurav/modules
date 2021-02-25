@@ -1,0 +1,126 @@
+<section ng-init="rowsToDisplay()">
+  <div class="page-header">
+    <div class="row info-panel">
+      <div class="col-md-4">
+        <h1>Jobs</h1>
+      </div>
+      <div class="col-md-4 search-top-bar">
+        <input class="form-control col-md-4" type="text" ng-model="search" placeholder="Search" ng-change="rowsToDisplay()" ng-bind-html/>
+      </div>
+      <div class="col-md-4 search-top-bar right-loader">
+        <img src='/modules/core/client/img/loaders/loader.png' width="42px" height="32px" ng-click="refreshList();" title="Refresh">
+      </div>
+    </div>
+  </div>
+
+  <div class="row info-panel">
+    <form name="reportListForm" class="form-inline container-fluid" ng-submit="rowsToDisplay()"
+          novalidate>
+      <div class="filter-wrap clearfix">
+        <div class="filter-col">
+              <div class="form-group  error-wrap">
+                <label>Start Date(UTC)</label>
+                <p class="input-group">
+                  <input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="startDate" is-open="startDateisOpen" ng-change="checkValidDate(startDate, endDate)"
+                       ng-model-options="{timezone: 'UTC'}" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openStartDateCalendar($event, prop)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </p>
+                <div class="error" ng-show="startDateErrMessage" class="text-danger">
+                  <p ng-bind="startDateErrMessage"></p>
+                </div>
+              </div>
+              <div class="form-group  error-wrap">
+                <label>End Date(UTC)</label>
+                <p class="input-group">
+                  <input type="text" class="form-control" datetime-picker="dd MMM yyyy HH:mm" ng-model="endDate" is-open="endDateisOpen" ng-change="checkValidDate(startDate, endDate)"
+                       ng-model-options="{timezone: 'UTC'}" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openEndDateCalendar($event, prop)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </p>
+                <div class="error" ng-show="endDateErrMessage" class="text-danger">
+                  <p ng-bind="endDateErrMessage"></p>
+                </div>
+              </div>
+        </div>
+        <button type="submit" class="btn luci-button--primary" ng-disabled="errMessage">Search</button>
+      </div>
+    </form>
+
+  </div>
+
+  
+
+  <div class="table-responsive" ng-show="tableParams.total(value)">
+    <table ng-table="tableParams" class="table table-bordered table-striped">
+      <tr ng-repeat="job in $data">
+        <td ng-bind="job.objectType" title="'Module'" sortable="'objectType'" class="capitalize"></td>
+        <td ng-bind="job.operation" title="'Operation'" sortable="'operation'" class="capitalize"></td>
+        <!-- <td ng-bind="job.object.code" title="'Object Code'" sortable="'object.code'"></td> -->
+        <td ng-bind="job.user.username" title="'User'" sortable="'user.username'"></td>
+        <td ng-bind="job.status" title="'Status'" sortable="'status'" class="capitalize"></td>
+        <!-- <td ng-if="isRoot" ng-bind="job.tenant.code" title="'Tenant'" sortable="'tenant.code'"></td> -->
+        <td ng-bind="job.created | date:'medium' : 'UTC'" title="'Created At (UTC)'" sortable="'created'"></td>
+        <td ng-bind="job.updated | date:'medium' : 'UTC'" title="'Updated At (UTC)'" sortable="'updated'"></td>
+        <td title="'Actions'">
+          <!-- <button type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="jobs.view({jobId: job.jobId})" title="Details">
+            <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#monitor">
+                  </use>
+              </svg>
+            </span>
+          </button>    -->
+          <button type="button" class="luci-button luci-button--icon-only luci-button--primary" ng-click="viewJobDetailsModal(job)" title="Details">
+            <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#monitor">
+                  </use>
+              </svg>
+            </span>
+          </button>  
+          <!-- <button type="button" class="btn-default btn" ng-click="fullViewModal(job.jobId)">modal</button> -->
+      </tr>
+    </table>
+  </div>
+  <div class="alert alert-warning text-center" ng-show="zeroRecords">
+    No Records found.
+  </div>
+</section>
+
+<script type="text/ng-template" id="viewJobDetails.html">
+  <div class="spinner text-center" ng-show="!modalDataEnabled" style="padding:20px">
+    <img src='/modules/core/client/img/loaders/loader.gif' width="30px" height="30px" title="loader">
+  </div> 
+  <div ng-show="modalDataEnabled" ng-init="findOne()">
+    <div class="modal-header sticky-modal-header">
+      <h3 class="pull-left">Job: <span class="capitalize">{{::job.objectType}}</span> - <span class="capitalize">{{::job.operation}}</span></h3>
+      <button  type="button" class="luci-button luci-button--icon-only luci-button--flat pull-right" ng-click="closeModal()" title="Close">
+        <span class="luci-button__inner">
+          <svg class="luci-icon luci-button__icon luci-button__icon--left" style="width:30px;height:30px" aria-hidden="true">
+              <use xlink:href="/assets/css/icons/luci.svg#close">
+              </use>
+          </svg>
+        </span>
+      </button>        
+    </div>
+    <div class="modal-body" id="modal-body">
+      <section>
+        <table class="table table-striped table-responsive" style="display:block;overflow-x:auto">
+          <tr><th>Module</th><td ng-bind="job.objectType" class="word-break-all capitalize"></td></tr>
+          <tr><th>Operation</th><td ng-bind="job.operation " class="word-break-all capitalize"></td></tr>
+          <tr><th>Created At (UTC)</th><td ng-bind="job.created |  date:'medium' : 'UTC'" ></td></tr>
+          <tr><th>Updated At (UTC)</th><td ng-bind="job.updated  | date:'medium' : 'UTC'" ></td></tr>
+          <tr><th>User</th><td ng-bind="job.user.username"></td></tr>
+          <tr><th>Payload</th><td><pre>{{job.payload | json}}</pre></td></tr>
+          <tr ng-if="job.result"><th>Result</th><td><pre>{{getResult(job.result) | json}}</pre></td></tr>     
+          <tr><th>Status</th><td ng-bind="job.status" ></td></tr> 
+          <tr ng-if="job.last_error"><th>Error</th><td class="text-danger word-break-all">{{job.last_error}}</td></tr>
+          <tr ng-if="job.comments"><th>Comments</th><td class="word-break-all">{{job.comments}}</td></tr>
+        </table>
+      </section>
+    </div>
+  </div>
+</script>

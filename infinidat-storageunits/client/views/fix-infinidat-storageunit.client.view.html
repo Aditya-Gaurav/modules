@@ -1,0 +1,34 @@
+<section ng-controller="InfinidatStorageunitsController" ng-init="findOne()">
+  <div class="page-header">
+    <h1>Infinidat Storageunit: <span>{{ ::storageunit.name }}</span></h1>
+  <div>
+  <form name="storageunitForm" class="form-horizontal" ng-submit="fix(storageunitForm.$valid)" novalidate>
+    <fieldset>
+      <div class="row show-grid">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" name="status" id="status" ng-model="storageunit.status">
+                <option value="">Please select a Status</option>
+                <option ng-repeat="status in validStatusToAssign" value="{{status}}">{{status}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn luci-button--primary">Fix</button>
+            <button type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="infinidat-storageunits.list" title="Back">
+              <span class="luci-button__inner">
+                <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                    <use xlink:href="/assets/css/icons/luci.svg#navigate-back">
+                    </use>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div ng-show="error" class="text-danger">
+        <strong ng-bind="error"></strong>
+      </div>
+    </fieldset>
+  </form>
+</section>

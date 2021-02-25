@@ -1,0 +1,82 @@
+<section ng-controller="ClustersController" ng-init="find()">
+  <div class="page-header">
+    <h1>New Cluster</h1>
+  </div>
+  <div class="col-md-6">
+    <form name="clusterForm" class="form-horizontal" ng-submit="create(clusterForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group required" show-errors>
+          <label for="name">Name</label>
+          <input name="name" type="text" ng-model="name" id="name" class="form-control" placeholder="Name"
+            ng-minlength="3"
+            ng-maxlength="64"
+            ng-pattern="/^[a-zA-Z0-9\-_]*$/"
+            required>
+         <div ng-messages="clusterForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Cluster name is required.</p>
+            <p class="help-block error-text" ng-message="minlength">Cluster name should have Minimum 3 characters.</p>
+            <p class="help-block error-text" ng-message="maxlength">Cluster name should have Maximum 64 characters.</p>
+            <p class="help-block error-text" ng-message="pattern">Cluster name can only include alphanumeric characters including dash and underscore.</p>
+          </div>
+        </div>
+        <div class="form-group required" show-errors>
+          <label for="uuid">UUID</label>
+          <input name="uuid" type="text" ng-model="uuid" id="uuid" class="form-control" placeholder="eg. 90ba5cfe-a3aa-11e6-b4c4-005056a8f8ff"
+          ng-pattern="/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/" required>
+          <div ng-messages="clusterForm.uuid.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Cluster UUID is required.</p>            
+            <p class="help-block error-text" ng-message="pattern">UUID is invalid</p>
+          </div>
+        </div>
+        <div class="form-group required" show-errors >
+          <label for="management_ip">Management IP</label>
+          <input name="management_ip" type="text" ng-model="management_ip" id="management_ip" class="form-control" placeholder="e.g. 10.20.30.65"
+                 ng-pattern="/^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/" required>
+          <div ng-messages="clusterForm.management_ip.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Management IP is required.</p>
+            <p class="help-block error-text" ng-message="pattern">A valid Management IP address is required</p>
+          </div>          
+        </div>
+        <div class="form-group required" show-errors>
+          <label for="provisioning_state">Provisioning State</label>   
+          <select name="provisioning_state" ng-model="provisioning_state" id="provisioning_state" class="form-control"  required >
+            <option value="">Please select a Provisioning State</option>
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+          </select>
+           
+          <div ng-messages="clusterForm.provisioning_state.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Provisioning State is required.</p>
+          </div>
+        </div>
+        <div class="form-group required" show-errors>
+          <label for="provisioning_state">Applications</label>   
+          <select name="applications" ng-model="applications" id="applications" class="form-control"  required ng-options="app.applicationId as app.name for app in applicationsList | orderBy: 'name'" multiple ng-disabled="applicationsList.length==0">
+          </select>
+          <!-- <p class="help-block" ng-message="required">Please select one more applications which can be provisioned under the cluster</p> -->
+          <div ng-messages="clusterForm.applications.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Please select one more applications which can be provisioned under the cluster</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors> 
+          <input type="checkbox" ng-model="dr_enabled"  ng-change="checkboxChanged()" name="dr_enabled" value="true">
+          <label for="dr_enabled">DR Enabled</label>  
+       </div>
+        <div class="form-group">
+          <button  type="button" class="luci-button luci-button--primary" ng-click="create(clusterForm.$valid)">Create</button>
+          <button  type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="clusters.list" title="Back">
+              <span class="luci-button__inner">
+                <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                    <use xlink:href="/assets/css/icons/luci.svg#navigate-back">
+                    </use>
+                </svg>
+            </span>
+          </button>
+        </div>
+        <div ng-show="error" class="text-danger">
+          <strong ng-bind="error"></strong>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

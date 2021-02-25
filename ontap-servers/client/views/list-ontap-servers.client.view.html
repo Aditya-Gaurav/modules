@@ -1,0 +1,75 @@
+<section ng-init="rowsToDisplay()">
+  <div class="page-header">
+    <div class="row">
+      <div class="col-md-4">
+        <h1>{{labels.server.serverName}}s</h1>
+      </div>
+      <div class="col-md-4 search-top-bar">
+        <input class="form-control col-md-4" type="text" ng-model="search" placeholder="Search" ng-change="rowsToDisplay()" ng-bind-html />        
+      </div> 
+      <div class="col-md-2 search-top-bar  right-loader">
+        <button ng-if="(serverAccessRoles.create | intersect : authentication.user.roles)> 0" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="ontap-servers.create">
+          <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#add">
+                  </use>
+              </svg>
+          </span>
+        </button>
+        <img src='/modules/core/client/img/loaders/loader.png' width="42px" height="32px" ng-click="refreshList();" title="Refresh">
+      </div> 
+       
+    </div>
+    <!-- <div class="row">
+      <div class="col-md-4 right-loader">
+        <img src='/modules/core/client/img/loaders/loader.png' width="42px" height="32px" ng-click="refreshList();" title="Refresh">
+      </div>
+    </div> -->
+  </div>
+  <div class="table-responsive" ng-show="tableParams.total(value)">
+    <table ng-table="tableParams" class="table table-bordered table-striped">
+      <tr ng-repeat="server in $data">
+        <td ng-bind="server.name" title="'Name'" sortable="'name'" class="breakword"></td>
+        <td ng-bind="server.cluster.name" title="'Cluster'" sortable="'cluster.name'" class="breakword"></td>
+        <td ng-bind="server.protocols" title="'Available Protocols'" sortable="'server.protocols'" class="breakword"></td>
+        <td   title="'Actions'">
+          <!-- <button type="button" class="btn btn-xs btn-primary" ng-disabled="server.status!=='Operational'" ui-sref="servers.edit({serverId: server.serverId})">Edit</button> -->
+          <button ng-if="(serverAccessRoles.update | intersect : authentication.user.roles)> 0" type="button" class="luci-button luci-button--icon-only luci-button--primary" ng-disabled="server.status!=='Operational'" ui-sref="ontap-servers.edit({ontapServerId: server.ontapServerId})" title="Edit">
+            <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#edit">
+                  </use>
+              </svg>
+            </span>
+          </button>
+        <!-- </td>
+        <td ng-if="isRoot"> -->
+          <!-- <button type="button" class="btn btn-xs btn-primary" ui-sref="servers.fix({serverId: server.serverId})">Fix</button> -->
+          <button ng-if="(serverAccessRoles.update | intersect : authentication.user.roles)> 0" ng-if="isRoot"  type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="ontap-servers.fix({ontapServerId: server.serverId})" title="Fix">
+            <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#manage">
+                  </use>
+              </svg>
+            </span>
+          </button>
+<!-- 
+        </td>
+        <td title="'Actions'"> -->
+          <button type="button" class="luci-button luci-button--icon-only luci-button--primary" ui-sref="ontap-servers.view({ontapServerId: server.serverId})" title="Details">
+            <span class="luci-button__inner">
+              <svg class="luci-icon luci-button__icon luci-button__icon--left" aria-hidden="true">
+                  <use xlink:href="/assets/css/icons/luci.svg#monitor">
+                  </use>
+              </svg>
+            </span>
+          </button>
+        </td>
+        
+      </tr>
+    </table>
+  </div>
+  <div class="alert alert-warning text-center" ng-show="zeroRecords">
+    No Records found.
+  </div>
+</section>
